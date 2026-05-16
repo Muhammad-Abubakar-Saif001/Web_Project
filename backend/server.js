@@ -503,6 +503,12 @@ app.patch('/api/enrollments/:id/decision', requireAuth, requireRole(['admin']), 
       return res.status(400).json({ message: 'Decision must be Approved or Denied.' });
     }
 
+    if (decision === 'Denied') {
+      const result = await query('delete from enrollments where id = $1 returning *', [req.params.id]);
+      if (!result.rowCount) return res.status(404).json({ message: 'Enrollment not found.' });
+      return res.json({ enrollment: result.rows[0] });
+    }
+
     const result = await query(
       `update enrollments
        set status = $1
