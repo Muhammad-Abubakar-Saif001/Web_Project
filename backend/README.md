@@ -22,6 +22,7 @@ copy .env.example .env
 ```text
 DATABASE_URL=postgresql://postgres:<YOUR-SUPABASE-PASSWORD>@db.nqrfskmrepojqmurjrvo.supabase.co:5432/postgres?sslmode=no-verify
 DB_SSL_REJECT_UNAUTHORIZED=false
+CLIENT_ORIGIN=https://web-project-courseflow.vercel.app
 ```
 
 You can open a Supabase `psql` session with:

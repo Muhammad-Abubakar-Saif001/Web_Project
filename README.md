@@ -54,6 +54,13 @@ Update `.env` with your Supabase PostgreSQL connection:
 DATABASE_URL=postgresql://postgres:<YOUR-SUPABASE-PASSWORD>@db.nqrfskmrepojqmurjrvo.supabase.co:5432/postgres?sslmode=no-verify
 JWT_SECRET=replace-this-with-a-long-random-secret
 DB_SSL_REJECT_UNAUTHORIZED=false
+CLIENT_ORIGIN=https://web-project-courseflow.vercel.app
+```
+
+For the React frontend, set this in `frontend/.env` or in Vercel environment variables:
+
+```text
+VITE_API_URL=https://web-project-yj6g.onrender.com/api
 ```
 
 You can also connect with `psql`:
@@ -84,6 +91,10 @@ npm run dev
 Frontend: `http://127.0.0.1:5173/`
 
 Backend: `http://127.0.0.1:4000/api/health`
+
+Production frontend: `https://web-project-courseflow.vercel.app`
+
+Production backend API: `https://web-project-yj6g.onrender.com/api`
 
 ## Seeded Admin Accounts
 
