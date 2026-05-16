@@ -73,7 +73,7 @@ function App() {
   const [page, setPage] = useState(1);
   const [editingCourse, setEditingCourse] = useState(null);
   const [showCourseForm, setShowCourseForm] = useState(false);
-  const [message, setMessage] = useState('Connect PostgreSQL, then login to load database data.');
+  const [message, setMessage] = useState('Please login to continue.');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -91,7 +91,7 @@ function App() {
       const me = await apiRequest('/auth/me', { token: authToken });
       setUser(me.user);
       await loadData(authToken, me.user);
-      setMessage('Connected to PostgreSQL API');
+      setMessage('Login successful');
     } catch (error) {
       setMessage(error.message);
       logout();
@@ -143,7 +143,7 @@ function App() {
       setUser(payload.user);
       await loadData(payload.token, payload.user);
       setActiveView('dashboard');
-      setMessage('Connected to PostgreSQL API');
+      setMessage('Login successful');
     } catch (error) {
       setMessage(error.message);
     } finally {
@@ -490,7 +490,7 @@ function Topbar({ user, message, onLogout }) {
       <div>
         <p className="eyebrow">Authenticated {user.role} session</p>
         <h1>Welcome back, {user.name}.</h1>
-        <span className={message.startsWith('Connected') ? 'api-status online' : 'api-status'}>{message}</span>
+        <span className={message === 'Login successful' ? 'api-status online' : 'api-status'}>{message}</span>
       </div>
       <div className="profile-chip">
         <div className="avatar">{user.name.slice(0, 1)}</div>
