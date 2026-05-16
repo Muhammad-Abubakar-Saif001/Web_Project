@@ -581,10 +581,18 @@ function Dashboard({ user, stats, courses, enrolledCourses, studentRoster, setAc
       </div>
 
       <div className="stat-grid">
-        <StatCard icon={LibraryBig} label="Courses" value={stats.totalCourses} trend="Total offerings" />
-        <StatCard icon={Activity} label="Pending" value={stats.pending} trend="Admin review queue" />
-        <StatCard icon={Star} label="Avg. rating" value={stats.avgRating.toFixed(1)} trend="Approved catalog" />
-        <StatCard icon={BarChart3} label="Revenue" value={`PKR ${Math.round(stats.revenue).toLocaleString()}`} trend="From enrollments" />
+        {(user.role === 'admin') && (
+          <StatCard icon={LibraryBig} label="Courses" value={stats.totalCourses} trend="Total offerings" />
+        )}
+        {(user.role === 'admin' || user.role === 'instructor') && (
+          <StatCard icon={Activity} label="Pending" value={stats.pending} trend="Admin review queue" />
+        )}
+        {(user.role === 'admin' || user.role === 'student') && (
+          <StatCard icon={Star} label="Avg. rating" value={stats.avgRating.toFixed(1)} trend="Approved catalog" />
+        )}
+        {(user.role === 'admin') && (
+          <StatCard icon={BarChart3} label="Revenue" value={`PKR ${Math.round(stats.revenue).toLocaleString()}`} trend="From enrollments" />
+        )}
       </div>
 
       <div className="content-grid">
