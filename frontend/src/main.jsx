@@ -530,10 +530,16 @@ function Sidebar({ activeView, setActiveView, role, theme, toggleTheme }) {
             );
           })}
         
-        <button className="nav-item" onClick={toggleTheme} style={{ marginTop: '12px' }}>
-          {theme === 'light' ? <Moon size={19} /> : <Sun size={19} />}
-          <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
-        </button>
+        <div className="theme-switch-wrapper">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {theme === 'light' ? <Moon size={19} /> : <Sun size={19} />}
+            <span>Dark Mode</span>
+          </div>
+          <label className="theme-switch">
+            <input type="checkbox" checked={theme === 'dark'} onChange={toggleTheme} />
+            <span className="slider"></span>
+          </label>
+        </div>
       </nav>
       <div className="sidebar-footer">
         <LockKeyhole size={18} />
