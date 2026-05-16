@@ -320,12 +320,14 @@ function App() {
       totalCourses: source.length,
       approved: courses.filter((course) => course.status === 'Approved').length,
       pending: courses.filter((course) => course.status === 'Pending').length,
-      learners: courses.reduce((sum, course) => sum + course.students, 0),
+      totalStudents: user?.role === 'admin' 
+        ? users.filter(u => u.role === 'student').length 
+        : courses.reduce((sum, course) => sum + course.students, 0),
       revenue,
       avgRating: courses.length ? courses.reduce((sum, course) => sum + course.rating, 0) / courses.length : 0,
       instructors: new Set(courses.map((course) => course.instructorId || course.instructor)).size,
     };
-  }, [courses, enrolledCourses, user]);
+  }, [courses, enrolledCourses, user, users]);
 
   if (!user) {
     return <AuthScreen loading={loading} onSubmit={authenticate} />;
@@ -601,7 +603,7 @@ function Dashboard({ user, stats, courses, enrolledCourses, studentRoster, setAc
         <div className="hero-metrics">
           <Metric icon={LibraryBig} label="Courses" value={stats.totalCourses} />
           <Metric icon={UserCog} label="Instructors" value={stats.instructors} />
-          <Metric icon={Users} label="Learners" value={stats.learners} />
+          <Metric icon={Users} label="Students" value={stats.totalStudents} />
         </div>
       </div>
 
