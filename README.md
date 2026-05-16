@@ -51,22 +51,22 @@ copy .env.example .env
 Update `.env` with your Supabase PostgreSQL connection:
 
 ```text
-DATABASE_URL=postgresql://postgres:<YOUR-SUPABASE-PASSWORD>@db.nqrfskmrepojqmurjrvo.supabase.co:5432/postgres?sslmode=no-verify
+DATABASE_URL=postgresql://postgres:<YOUR-SUPABASE-PASSWORD>@db.your-supabase-project.supabase.co:5432/postgres?sslmode=no-verify
 JWT_SECRET=replace-this-with-a-long-random-secret
 DB_SSL_REJECT_UNAUTHORIZED=false
-CLIENT_ORIGIN=https://web-project-courseflow.vercel.app
+CLIENT_ORIGIN=https://your-frontend-project.vercel.app
 ```
 
 For the React frontend, set this in `frontend/.env` or in Vercel environment variables:
 
 ```text
-VITE_API_URL=https://web-project-yj6g.onrender.com/api
+VITE_API_URL=https://your-backend-project.onrender.com/api
 ```
 
 You can also connect with `psql`:
 
 ```bash
-psql -h db.nqrfskmrepojqmurjrvo.supabase.co -p 5432 -d postgres -U postgres
+psql -h db.your-supabase-project.supabase.co -p 5432 -d postgres -U postgres
 ```
 
 Or use the helper script:
@@ -92,9 +92,9 @@ Frontend: `http://127.0.0.1:5173/`
 
 Backend: `http://127.0.0.1:4000/api/health`
 
-Production frontend: `https://web-project-courseflow.vercel.app`
+Production frontend: `https://your-frontend-project.vercel.app`
 
-Production backend API: `https://web-project-yj6g.onrender.com/api`
+Production backend API: `https://your-backend-project.onrender.com/api`
 
 ## Platform Tutorial
 
