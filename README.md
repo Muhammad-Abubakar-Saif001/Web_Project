@@ -51,8 +51,9 @@ copy .env.example .env
 Update `.env` with your Supabase PostgreSQL connection:
 
 ```text
-DATABASE_URL=postgresql://postgres:<YOUR-SUPABASE-PASSWORD>@db.nqrfskmrepojqmurjrvo.supabase.co:5432/postgres?sslmode=require
+DATABASE_URL=postgresql://postgres:<YOUR-SUPABASE-PASSWORD>@db.nqrfskmrepojqmurjrvo.supabase.co:5432/postgres?sslmode=no-verify
 JWT_SECRET=replace-this-with-a-long-random-secret
+DB_SSL_REJECT_UNAUTHORIZED=false
 ```
 
 You can also connect with `psql`:

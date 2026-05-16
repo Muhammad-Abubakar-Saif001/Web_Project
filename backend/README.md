@@ -20,7 +20,8 @@ copy .env.example .env
 3. Update `DATABASE_URL` in `.env`.
 
 ```text
-DATABASE_URL=postgresql://postgres:<YOUR-SUPABASE-PASSWORD>@db.nqrfskmrepojqmurjrvo.supabase.co:5432/postgres?sslmode=require
+DATABASE_URL=postgresql://postgres:<YOUR-SUPABASE-PASSWORD>@db.nqrfskmrepojqmurjrvo.supabase.co:5432/postgres?sslmode=no-verify
+DB_SSL_REJECT_UNAUTHORIZED=false
 ```
 
 You can open a Supabase `psql` session with:
