@@ -497,6 +497,7 @@ function AuthScreen({ loading, onSubmit }) {
 }
 
 function Navbar({ activeView, setActiveView, role, theme, toggleTheme, user, onLogout }) {
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const items = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'marketplace', label: role === 'student' ? 'Marketplace' : 'Courses', icon: LibraryBig },
@@ -540,15 +541,37 @@ function Navbar({ activeView, setActiveView, role, theme, toggleTheme, user, onL
             <span className="slider"></span>
           </label>
         </div>
-        <div className="navbar-footer" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <div className="avatar" style={{ width: '36px', height: '36px', minWidth: '36px' }}>{user.name.slice(0, 1)}</div>
-          <div style={{ overflow: 'hidden', textAlign: 'left', display: 'none' }} className="user-details">
-            <strong style={{ display: 'block', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.9rem' }}>{user.name}</strong>
-            <span style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</span>
-          </div>
-          <button onClick={onLogout} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', padding: '4px' }} title="Logout">
-            <LogOut size={18} />
+        <div className="navbar-footer" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+          <button 
+            className="avatar profile-toggle" 
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+            title="Profile Menu"
+          >
+            {user.name.slice(0, 1).toUpperCase()}
           </button>
+          
+          {showProfileMenu && (
+            <>
+              <div className="profile-overlay" onClick={() => setShowProfileMenu(false)}></div>
+              <div className="profile-dropdown">
+                <div className="profile-dropdown-header">
+                  <strong>{user.name}</strong>
+                  <span>{user.email}</span>
+                  <div className="profile-role">{role}</div>
+                </div>
+                <div className="profile-dropdown-body">
+                  <button className="dropdown-item" onClick={() => { alert('Change Password functionality would go here.'); setShowProfileMenu(false); }}>
+                    <LockKeyhole size={16} />
+                    Change Password
+                  </button>
+                  <button className="dropdown-item text-danger" onClick={onLogout}>
+                    <LogOut size={16} />
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>
