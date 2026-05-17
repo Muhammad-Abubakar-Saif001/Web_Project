@@ -136,6 +136,20 @@ app.get('/api/auth/me', requireAuth, async (req, res, next) => {
   }
 });
 
+app.post('/api/auth/change-password', requireAuth, async (req, res, next) => {
+  try {
+    const { newPassword } = req.body;
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
+    }
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await query(`update users set password_hash = $1 where id = $2`, [passwordHash, req.user.sub]);
+    res.json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/api/users', requireAuth, requireRole(['admin']), async (_req, res, next) => {
   try {
     const result = await query(

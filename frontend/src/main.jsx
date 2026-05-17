@@ -78,6 +78,7 @@ function App() {
   const [editingCourse, setEditingCourse] = useState(null);
   const [showCourseForm, setShowCourseForm] = useState(false);
   const [paymentCourse, setPaymentCourse] = useState(null);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -335,14 +336,15 @@ function App() {
 
   return (
     <div className="app-shell">
-      <Navbar 
-        activeView={activeView} 
-        setActiveView={setActiveView} 
-        role={user.role} 
-        theme={theme} 
-        toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} 
+      <Navbar
+        activeView={activeView}
+        setActiveView={setActiveView}
+        role={user.role}
+        theme={theme}
+        toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         user={user}
         onLogout={logout}
+        onChangePassword={() => setShowPasswordModal(true)}
       />
       <main className="main-area">
 
@@ -441,6 +443,14 @@ function App() {
         />
       )}
 
+      {showPasswordModal && (
+        <ChangePasswordModal 
+          onClose={() => setShowPasswordModal(false)} 
+          token={token} 
+          showToast={showToast} 
+        />
+      )}
+
       {toast && <Toast message={toast.message} type={toast.type} />}
     </div>
   );
@@ -496,7 +506,7 @@ function AuthScreen({ loading, onSubmit }) {
   );
 }
 
-function Navbar({ activeView, setActiveView, role, theme, toggleTheme, user, onLogout }) {
+function Navbar({ activeView, setActiveView, role, theme, toggleTheme, user, onLogout, onChangePassword }) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const items = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -560,7 +570,7 @@ function Navbar({ activeView, setActiveView, role, theme, toggleTheme, user, onL
                   <div className="profile-role">{role}</div>
                 </div>
                 <div className="profile-dropdown-body">
-                  <button className="dropdown-item" onClick={() => { alert('Change Password functionality would go here.'); setShowProfileMenu(false); }}>
+                  <button className="dropdown-item" onClick={() => { onChangePassword(); setShowProfileMenu(false); }}>
                     <LockKeyhole size={16} />
                     Change Password
                   </button>
@@ -1067,6 +1077,77 @@ function PaymentModal({ course, onClose, onConfirm }) {
           <button type="button" className="primary-btn" onClick={onConfirm}>Confirm Payment</button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ChangePasswordModal({ onClose, token, showToast }) {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      showToast('Passwords do not match.', 'error');
+      return;
+    }
+    if (newPassword.length < 6) {
+      showToast('Password must be at least 6 characters.', 'error');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await apiRequest('/auth/change-password', {
+        method: 'POST',
+        body: { newPassword },
+        token,
+      });
+      showToast('Password changed successfully.', 'success');
+      onClose();
+    } catch (error) {
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="modal-backdrop" role="dialog" aria-modal="true">
+      <form className="modal payment-modal" onSubmit={handleSubmit}>
+        <div className="modal-header">
+          <div>
+            <p className="eyebrow">Security</p>
+            <h2>Change Password</h2>
+          </div>
+          <button type="button" className="icon-btn" onClick={onClose}>
+            <X size={18} />
+          </button>
+        </div>
+        <div style={{ display: 'grid', gap: '14px' }}>
+          <Field 
+            label="New Password" 
+            type="password" 
+            value={newPassword} 
+            onChange={setNewPassword} 
+            required 
+          />
+          <Field 
+            label="Confirm Password" 
+            type="password" 
+            value={confirmPassword} 
+            onChange={setConfirmPassword} 
+            required 
+          />
+        </div>
+        <div className="modal-actions" style={{ marginTop: '20px' }}>
+          <button type="button" className="secondary-btn" onClick={onClose}>Cancel</button>
+          <button type="submit" className="primary-btn" disabled={loading}>
+            {loading ? 'Saving...' : 'Update Password'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
