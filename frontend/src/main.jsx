@@ -859,12 +859,27 @@ function Learning({ courses, setActiveView, setActiveCourseId }) {
 }
 
 function CourseViewer({ course, updateProgress, onBack }) {
-  const completedSet = new Set(course.completedLessons || []);
+  const [localCompleted, setLocalCompleted] = useState(course.completedLessons || []);
+
+  useEffect(() => {
+    setLocalCompleted(course.completedLessons || []);
+  }, [course.completedLessons]);
+
+  const completedSet = new Set(localCompleted);
+  const localProgress = course.lessons > 0 
+    ? Math.round((localCompleted.length / course.lessons) * 100) 
+    : 0;
+
   const toggleLesson = (lessonIndex) => {
-    const newCompleted = new Set(completedSet);
-    if (newCompleted.has(lessonIndex)) newCompleted.delete(lessonIndex);
-    else newCompleted.add(lessonIndex);
-    updateProgress(course.id, Array.from(newCompleted));
+    const newCompletedSet = new Set(completedSet);
+    if (newCompletedSet.has(lessonIndex)) {
+      newCompletedSet.delete(lessonIndex);
+    } else {
+      newCompletedSet.add(lessonIndex);
+    }
+    const newCompletedArray = Array.from(newCompletedSet);
+    setLocalCompleted(newCompletedArray);
+    updateProgress(course.id, newCompletedArray);
   };
 
   const lessons = Array.from({ length: course.lessons }, (_, i) => i + 1);
@@ -885,10 +900,10 @@ function CourseViewer({ course, updateProgress, onBack }) {
           <div className="progress-wrap large" style={{ marginBottom: '24px' }}>
             <div className="progress-label">
               <span>Course Progress</span>
-              <strong>{course.progress}%</strong>
+              <strong>{localProgress}%</strong>
             </div>
             <div className="progress-track">
-              <span style={{ width: `${course.progress}%` }} />
+              <span style={{ width: `${localProgress}%` }} />
             </div>
           </div>
           
