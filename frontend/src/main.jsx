@@ -335,7 +335,7 @@ function App() {
 
   return (
     <div className="app-shell">
-      <Sidebar 
+      <Navbar 
         activeView={activeView} 
         setActiveView={setActiveView} 
         role={user.role} 
@@ -496,7 +496,7 @@ function AuthScreen({ loading, onSubmit }) {
   );
 }
 
-function Sidebar({ activeView, setActiveView, role, theme, toggleTheme, user, onLogout }) {
+function Navbar({ activeView, setActiveView, role, theme, toggleTheme, user, onLogout }) {
   const items = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'marketplace', label: role === 'student' ? 'Marketplace' : 'Courses', icon: LibraryBig },
@@ -506,7 +506,7 @@ function Sidebar({ activeView, setActiveView, role, theme, toggleTheme, user, on
   ];
 
   return (
-    <aside className="sidebar">
+    <header className="navbar">
       <div className="brand">
         <div className="brand-mark">
           <BookOpen size={24} />
@@ -528,33 +528,30 @@ function Sidebar({ activeView, setActiveView, role, theme, toggleTheme, user, on
                 onClick={() => setActiveView(item.id)}
               >
                 <Icon size={19} />
-                <span>{item.label}</span>
+                <span className="nav-label">{item.label}</span>
               </button>
             );
           })}
-        
-        <div className="theme-switch-wrapper">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {theme === 'light' ? <Moon size={19} /> : <Sun size={19} />}
-            <span>Dark Mode</span>
-          </div>
-          <label className="theme-switch">
+      </nav>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div className="theme-switch-wrapper" style={{ margin: 0, padding: 0 }}>
+          <label className="theme-switch" title="Toggle Dark Mode">
             <input type="checkbox" checked={theme === 'dark'} onChange={toggleTheme} />
             <span className="slider"></span>
           </label>
         </div>
-      </nav>
-      <div className="sidebar-footer" style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '16px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.11)' }}>
-        <div className="avatar" style={{ width: '36px', height: '36px', minWidth: '36px' }}>{user.name.slice(0, 1)}</div>
-        <div style={{ overflow: 'hidden', textAlign: 'left' }}>
-          <strong style={{ display: 'block', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.9rem' }}>{user.name}</strong>
-          <span style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</span>
+        <div className="navbar-footer" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div className="avatar" style={{ width: '36px', height: '36px', minWidth: '36px' }}>{user.name.slice(0, 1)}</div>
+          <div style={{ overflow: 'hidden', textAlign: 'left', display: 'none' }} className="user-details">
+            <strong style={{ display: 'block', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.9rem' }}>{user.name}</strong>
+            <span style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</span>
+          </div>
+          <button onClick={onLogout} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', padding: '4px' }} title="Logout">
+            <LogOut size={18} />
+          </button>
         </div>
-        <button onClick={onLogout} style={{ marginLeft: 'auto', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', padding: '4px' }} title="Logout">
-          <LogOut size={18} />
-        </button>
       </div>
-    </aside>
+    </header>
   );
 }
 
