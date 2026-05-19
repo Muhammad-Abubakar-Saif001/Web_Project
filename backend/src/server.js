@@ -3,8 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
-import { query } from './src/db.js';
-import { requireAuth, requireRole, signToken } from './src/auth.js';
+import { query } from './data-source.js';
+import { requireAuth, requireRole, signToken } from './middleware/auth.js';
 
 dotenv.config();
 

@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { pool } from './db.js';
+import { pool } from './data-source.js';
 
 dotenv.config();
 

@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\"",
     "dev:frontend": "vite --config frontend/vite.config.js --host 127.0.0.1",
-    "dev:api": "node --watch backend/server.js",
-    "start:api": "node backend/server.js",
+    "dev:api": "node --watch backend/src/server.js",
+    "start:api": "node backend/src/server.js",
     "build": "vite build --config frontend/vite.config.js",
     "preview": "vite preview --config frontend/vite.config.js --host 127.0.0.1",
     "lint": "eslint .",
