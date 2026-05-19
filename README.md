@@ -1,110 +1,288 @@
-# CourseFlow Marketplace
+<div align="center">
 
-A full-stack online course marketplace and learning platform built with React, Node.js, Express, and PostgreSQL.
+<img src="https://img.shields.io/badge/🎓-CourseFlow-4f46e5?style=for-the-badge&logoColor=white" height="60" />
+
+### The interactive platform for seamless learning and course management.
+
+Create engaging courses · Discover new skills · Manage with ease
+
+<br/>
+
+![React](https://img.shields.io/badge/React_18+-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-1a1a2e?style=flat-square&logo=vite&logoColor=646CFF)
+![Node.js](https://img.shields.io/badge/Node.js_18+-1a1a2e?style=flat-square&logo=node.js&logoColor=4ADE80)
+![Express](https://img.shields.io/badge/Express-1a1a2e?style=flat-square&logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-1a1a2e?style=flat-square&logo=postgresql&logoColor=4169E1)
+![Supabase](https://img.shields.io/badge/Supabase-1a1a2e?style=flat-square&logo=supabase&logoColor=3ECF8E)
+
+<br/>
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-0ea5e9?style=for-the-badge&logo=vercel&logoColor=white)](#)
+[![API Reference](https://img.shields.io/badge/API_Reference-6366f1?style=for-the-badge&logo=swagger&logoColor=white)](#api-reference)
+[![Report Bug](https://img.shields.io/badge/Report_Bug-ef4444?style=for-the-badge&logo=github&logoColor=white)](../../issues)
+[![Request Feature](https://img.shields.io/badge/Request_Feature-10b981?style=for-the-badge&logo=github&logoColor=white)](../../issues)
+
+</div>
+
+---
 
 ## Features
 
-- React frontend with role-aware student, instructor, and admin workspaces
-- Node.js/Express backend API with unified dashboard endpoints for performance optimization
-- Modular React component architecture and centralized state management
-- Database entities for structured data access
-- PostgreSQL schema and seed data
-- Real email/password authentication with JWT-protected API actions
-- Student registration by default
-- Admin-created instructor accounts
-- Admin approval or denial for new instructor course submissions
-- Course CRUD operations
-- Marketplace search, filters, sorting, and pagination
-- Enrollment and lesson progress tracking
-- Student view for enrolled courses
-- Instructor view for students enrolled in their courses
-- Admin panel for users, instructors, moderation, reports, and platform metrics
+| Feature | Description |
+|---|---|
+| **Role-based workspaces** | Distinct, secure dashboards tailored for Students, Instructors, and Admins. |
+| **Marketplace discovery** | Robust search, category filtering, sorting, and pagination for live courses. |
+| **Course lifecycle** | Instructors create courses; Admins review, approve, or deny them before they go live. |
+| **Manual payments (NayaPay)** | Secure offline payment verification workflow handled by platform Admins. |
+| **Learning tracking** | Enrolled students can track their progress and mark lessons as complete. |
+| **Instructor analytics** | Instructors can monitor student rosters and view progress metrics for active courses. |
+| **Admin control panel** | Centralized management for users, roles, course approvals, and pending enrollments. |
+| **Unified dashboard API** | Performance-optimized endpoints reducing network round-trips for data fetching. |
+| **Modular architecture** | Scalable React frontend with centralized state and database entity abstraction. |
+
+---
+
+## Architecture
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                         Browser                             │
+│                                                             │
+│   React (Vite)  +  Centralized State Management             │
+│   ┌─────────────┐  ┌──────────────┐  ┌──────────────────┐   │
+│   │  Auth Layer │  │ Dashboards   │  │ Course Viewer    │   │
+│   └─────────────┘  └──────────────┘  └──────────────────┘   │
+│                                                             │
+│   Modular Components  ·  JWT Auth  ·  Role-Based Routing    │
+└──────────────────────────┬──────────────────────────────────┘
+                           │  HTTP / JSON
+┌──────────────────────────▼──────────────────────────────────┐
+│                    Express API Backend                      │
+│                                                             │
+│   unified dashboard endpoints  ·  role middleware           │
+│                                                             │
+│   auth  ·  users  ·  courses  ·  enrollments                │
+│                                                             │
+│   Entity Data Access Layer (src/entity/)                    │
+└──────────────────────────┬──────────────────────────────────┘
+                           │  pg (node-postgres)
+┌──────────────────────────▼──────────────────────────────────┐
+│                    PostgreSQL (Supabase)                    │
+│                                                             │
+│   users ──► courses ──► enrollments                         │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## State Machines
+
+```text
+  === COURSE LIFECYCLE ===
+  
+  [Draft]
+     │  Instructor submits course
+     ▼
+  [Pending] ──────────────────────────┐
+     │                                │ Admin denies
+     │ Admin approves                 ▼
+     ▼                            [Denied]
+  [Approved / Live in Marketplace]
+  
+  
+  === ENROLLMENT LIFECYCLE ===
+  
+  Student clicks "Enroll" ──► Student pays via NayaPay
+                                       │
+                                       ▼
+                                 [Payment Pending]
+                                       │
+         ┌─────────────────────────────┴────────────────────────┐
+         │ Admin denies (Payment not received)                  │ Admin approves
+         ▼                                                      ▼
+  [Request Removed]                                       [Enrolled / Active]
+                                                                │
+                                                                ▼
+                                                        [Completed Lessons]
+```
+
+---
 
 ## Project Structure
 
 ```text
-frontend/
-  index.html
-  vite.config.js
-  src/main.jsx
-  src/App.jsx
-  src/store/
-backend/
-  db/schema.sql
-  db/seed.sql
-  src/server.js
-  src/auth.js
-  src/db.js
-  src/entity/
+CourseFlow/
+├── backend/
+│   ├── db/
+│   │   ├── schema.sql         # PostgreSQL schema definition
+│   │   └── seed.sql           # Sample data for testing
+│   ├── src/
+│   │   ├── entity/            # Database entities for structured data access
+│   │   │   ├── Course.js
+│   │   │   └── ...
+│   │   ├── auth.js            # JWT Authentication middleware and logic
+│   │   ├── db.js              # PostgreSQL connection setup
+│   │   └── server.js          # Express API server and routes
+│   └── package.json
+│
+└── frontend/
+    ├── src/
+    │   ├── store/             # Centralized state management slices
+    │   │   ├── authSlice.js
+    │   │   ├── eventSlice.js
+    │   │   └── store.js
+    │   ├── App.jsx            # Main route definition and component composition
+    │   ├── main.jsx           # Application entry point
+    │   └── styles.css         # UI Design system and styling
+    ├── index.html
+    ├── vite.config.js
+    └── package.json
 ```
 
-## Setup
+---
 
-Install dependencies:
+## Getting Started
+
+### Prerequisites
+
+- **Node.js** 18+
+- **PostgreSQL** (via Supabase or local instance)
+
+### 1 — Clone
 
 ```bash
-npm install
+git clone https://github.com/your-username/courseflow.git
+cd courseflow
 ```
 
-Create your environment file:
+### 2 — Configure Environment
 
 ```bash
-copy .env.example .env
+# Copy example environment variables
+cp .env.example .env
 ```
+Fill in `.env` with your PostgreSQL database credentials and a strong `JWT_SECRET`. **Never commit these secrets.**
 
-Update `.env` with your database connection details and a secure JWT secret. **Do not commit these secrets.**
-
-For the React frontend, set this in `frontend/.env` or in your hosting provider's environment variables:
-
+For the frontend, configure the API URL (e.g., in `frontend/.env`):
 ```text
-VITE_API_URL=https://your-backend-project.onrender.com/api
+VITE_API_URL=http://localhost:4000/api
 ```
 
-Create and seed the database:
+### 3 — Set up the Database
 
 ```bash
+# Create the schema and seed initial data
 npm run db:schema
 npm run db:seed
 ```
 
-Run the full app:
+### 4 — Start the Application
 
 ```bash
+# Run both frontend and backend concurrently
 npm run dev
 ```
 
-Frontend: `http://127.0.0.1:5173/`
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:4000
 
-Backend: `http://127.0.0.1:4000/api/health`
+---
 
-## Platform Tutorial
+## API Reference
 
-Welcome to CourseFlow! Here is a full tutorial on how to use the platform across its three main roles: Student, Instructor, and Admin.
+All endpoints are typically prefixed with `/api`.
 
-### 1. Student Experience
-- **Registration:** Anyone can visit the site and create an account. By default, new accounts are created as Students.
-- **Browsing:** Students can explore the "Marketplace" to see all approved courses. They can use the search bar, category filters, and sorting options to find the perfect course.
-- **Enrolling & Payment:** When a student finds a course they want, they click "Enroll". A payment modal will appear with instructions to manually send the course fee via NayaPay. After confirming, the enrollment goes into a "Payment Pending Approval" state.
-- **My Learning:** Students can track their approved enrollments in the "My Learning" dashboard, where they can mark lessons as complete and track their overall progress.
+<details>
+<summary><strong>Auth & Users</strong></summary>
+<br/>
 
-### 2. Instructor Experience
-- **Account Creation:** Instructors cannot register themselves. They must be invited and created by an Admin from the Admin Panel.
-- **Course Creation:** Once logged in, Instructors can create new courses via their dashboard. They fill out course details, including title, category, description, and price. 
-- **Approval Workflow:** Newly created courses are marked as "Pending" and are not visible in the public marketplace until an Admin reviews and approves them.
-- **Student Roster:** Instructors can view a list of all students enrolled in their active courses and track their learning progress.
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/auth/register` | — | Register a new student account |
+| `POST` | `/auth/login` | — | Sign in, returns JWT |
+| `POST` | `/auth/change-password` | Bearer | Update user password |
+| `GET` | `/users` | Admin | Get list of all users |
+| `POST` | `/users/instructors` | Admin | Create an instructor account |
 
-### 3. Admin Experience
-- **User Management:** Admins have full access to manage all users on the platform. They can view the user list, change roles, or suspend active accounts.
-- **Course Moderation:** Admins review "Pending" courses submitted by instructors. They can "Approve" them to go live in the marketplace or "Deny" them.
-- **Payment Approvals:** When a student confirms a manual payment, the request appears in the "Payment Approvals" queue on the Admin Panel. The admin verifies the transaction and clicks "Approve" to grant the student access to the course content, or "Deny" if the payment was not received.
+</details>
 
-## Useful Commands
+<details>
+<summary><strong>Dashboards</strong></summary>
+<br/>
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/dashboard/summary` | Bearer | Unified endpoint returning data based on role (Admin stats, Instructor roster, Student courses) |
+
+</details>
+
+<details>
+<summary><strong>Courses</strong></summary>
+<br/>
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/courses` | Optional | List marketplace courses |
+| `POST` | `/courses` | Instructor/Admin | Submit a new course |
+| `PATCH` | `/courses/:id/status` | Admin | Approve or deny a course |
+
+</details>
+
+<details>
+<summary><strong>Enrollments</strong></summary>
+<br/>
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/enrollments` | Student | Request enrollment (triggers Payment Pending) |
+| `GET` | `/enrollments/pending` | Admin | List pending payment approvals |
+| `PATCH` | `/enrollments/:id/status` | Admin | Approve or deny an enrollment request |
+| `PATCH` | `/enrollments/:id/progress`| Student | Update completed lessons |
+
+</details>
+
+---
+
+## Database Schema
+
+| Table | Purpose |
+|---|---|
+| `users` | Accounts for Students, Instructors, and Admins |
+| `courses` | Course details, pricing, descriptions, and approval status |
+| `enrollments` | Links students to courses, tracks progress and payment approval status |
+
+---
+
+## Scripts
 
 ```bash
-npm run dev:frontend
-npm run dev:api
-npm run lint
-npm run build
-npm run db:psql:supabase
-npm run skills:supabase
+npm run dev              # Starts both the API and Vite dev servers
+npm run dev:api          # Starts only the Express backend (with watch mode)
+npm run dev:frontend     # Starts only the Vite frontend
+npm run build            # Builds the frontend for production
+npm run lint             # Runs ESLint
+npm run db:psql:supabase # Connects to the Supabase database via CLI
 ```
+
+---
+
+## Deployment
+
+### Backend — Render
+1. Create a Web Service connected to your repository.
+2. Set the Root Directory (if required) or deploy from the main project root.
+3. Configure `DATABASE_URL` and `JWT_SECRET` in the Environment tab.
+4. Set the Start Command to `npm run start:api`.
+
+### Frontend — Vercel
+1. Import the project into Vercel.
+2. Set the Framework Preset to Vite.
+3. Add the `VITE_API_URL` environment variable pointing to your deployed Render backend.
+4. Deploy.
+
+---
+
+## License
+
+This project is licensed under the **MIT License**.
