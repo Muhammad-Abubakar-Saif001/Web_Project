@@ -32,7 +32,12 @@ export function Dashboard({ user, stats, courses, enrolledCourses, studentRoster
         </div>
         <div className="hero-metrics">
           <Metric icon={LibraryBig} label="Courses" value={stats.totalCourses} />
-          <Metric icon={UserCog} label="Instructors" value={stats.instructors} />
+          <Metric 
+            icon={UserCog} 
+            label="Instructors" 
+            value={stats.instructors} 
+            onClick={() => user.role === 'admin' && setActiveView('admin')}
+          />
           <Metric icon={Users} label="Students" value={stats.totalStudents} />
         </div>
       </div>

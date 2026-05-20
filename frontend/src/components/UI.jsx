@@ -1,9 +1,9 @@
 import React from 'react';
 import { BookOpen } from 'lucide-react';
 
-export function Metric({ icon: Icon, label, value }) {
+export function Metric({ icon: Icon, label, value, onClick }) {
   return (
-    <div className="metric">
+    <div className={`metric ${onClick ? 'clickable' : ''}`} onClick={onClick} style={onClick ? { cursor: 'pointer' } : {}}>
       <Icon size={19} />
       <span>{label}</span>
       <strong>{value}</strong>
