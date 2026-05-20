@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, UserCog, Filter, Users, ClipboardCheck, LibraryBig, Edit3, Search, ChevronLeft, ChevronRight, Mail } from 'lucide-react';
+import { Plus, UserCog, Filter, Users, ClipboardCheck, LibraryBig, Edit3, Search, ChevronLeft, ChevronRight, Mail, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
 import { PanelHeader } from './UI';
 import UserForm from './UserForm';
 
@@ -9,6 +9,7 @@ export function AdminPanel({ users, courses, instructors, pendingEnrollments, cr
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [userPage, setUserPage] = useState(1);
+  const [expandedInstructor, setExpandedInstructor] = useState(null);
 
   const pending = courses.filter((course) => course.status === 'Pending');
 
@@ -26,6 +27,14 @@ export function AdminPanel({ users, courses, instructors, pendingEnrollments, cr
 
   const openGmail = (email) => {
     window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`, '_blank');
+  };
+
+  const toggleInstructor = (id) => {
+    setExpandedInstructor(expandedInstructor === id ? null : id);
+  };
+
+  const getInstructorCourses = (instructorId) => {
+    return courses.filter(c => c.instructorId === instructorId || c.instructor === instructors.find(i => i.id === instructorId)?.name);
   };
 
   return (
@@ -76,7 +85,7 @@ export function AdminPanel({ users, courses, instructors, pendingEnrollments, cr
                 <div key={item.id} className="table-row">
                   <span>{item.name}</span>
                   <span 
-                    onClick={() => openGmail(item.email)} 
+                    onClick={(e) => { e.stopPropagation(); openGmail(item.email); }} 
                     style={{ cursor: 'pointer', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '4px' }}
                     title="Send email via Gmail"
                   >
@@ -161,22 +170,48 @@ export function AdminPanel({ users, courses, instructors, pendingEnrollments, cr
             <PanelHeader icon={ClipboardCheck} title="Instructors" />
             <div className="status-list">
               {instructors.map((item) => (
-                <div key={item.id} className="status-row" style={{ gridTemplateColumns: 'auto 1fr auto', cursor: 'default' }}>
-                  <span className="status-dot published" />
-                  <div>
-                    <span style={{ display: 'block', fontWeight: 'bold' }}>{item.name}</span>
-                    <span 
-                      onClick={() => openGmail(item.email)} 
-                      style={{ cursor: 'pointer', color: 'var(--primary)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}
-                    >
-                      <Mail size={12} />
-                      {item.email}
-                    </span>
+                <div key={item.id} style={{ display: 'grid', gap: '8px' }}>
+                  <div 
+                    className="status-row" 
+                    style={{ gridTemplateColumns: 'auto 1fr auto auto', cursor: 'pointer' }}
+                    onClick={() => toggleInstructor(item.id)}
+                  >
+                    <span className="status-dot published" />
+                    <div>
+                      <span style={{ display: 'block', fontWeight: 'bold' }}>{item.name}</span>
+                      <span 
+                        onClick={(e) => { e.stopPropagation(); openGmail(item.email); }} 
+                        style={{ cursor: 'pointer', color: 'var(--primary)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      >
+                        <Mail size={12} />
+                        {item.email}
+                      </span>
+                    </div>
+                    <div style={{ textAlign: 'right', marginRight: '10px' }}>
+                      <strong style={{ display: 'block' }}>{item.status}</strong>
+                      <small style={{ display: 'block', fontSize: '0.75rem', color: 'var(--muted)' }}>Joined: {item.joined}</small>
+                    </div>
+                    {expandedInstructor === item.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <strong>{item.status}</strong>
-                    <small style={{ display: 'block', fontSize: '0.75rem', color: 'var(--muted)' }}>Joined: {item.joined}</small>
-                  </div>
+                  
+                  {expandedInstructor === item.id && (
+                    <div style={{ padding: '0 10px 10px 30px', borderLeft: '2px solid var(--line)', marginLeft: '4px' }}>
+                      <p style={{ fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--muted)' }}>Courses Teaching:</p>
+                      {getInstructorCourses(item.id).length > 0 ? (
+                        <div style={{ display: 'grid', gap: '6px' }}>
+                          {getInstructorCourses(item.id).map(course => (
+                            <div key={course.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+                              <BookOpen size={14} style={{ color: 'var(--primary)' }} />
+                              <span>{course.title}</span>
+                              <span className={`pill ${course.status.toLowerCase()}`} style={{ fontSize: '0.7rem', minHeight: '18px' }}>{course.status}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>No courses assigned yet.</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
               {!instructors.length && <p className="muted">No instructors yet.</p>}
