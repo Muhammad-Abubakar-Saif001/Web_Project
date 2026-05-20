@@ -329,6 +329,7 @@ export function App() {
             }}
             onDelete={deleteCourse}
             onDecision={decideCourse}
+            setActiveView={setActiveView}
             Select={Select}
           />
         )}

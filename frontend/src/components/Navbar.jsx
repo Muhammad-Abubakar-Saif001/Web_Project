@@ -6,6 +6,7 @@ export function Navbar({ activeView, setActiveView, role, theme, toggleTheme, us
   const items = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'marketplace', label: role === 'student' ? 'Marketplace' : 'Courses', icon: LibraryBig },
+    { id: 'instructors', label: 'Instructors', icon: UserCog },
     { id: 'learning', label: 'My Learning', icon: GraduationCap, roles: ['student'] },
     { id: 'roster', label: 'Students', icon: Users, roles: ['instructor', 'admin'] },
     { id: 'admin', label: 'Admin Panel', icon: ShieldCheck, roles: ['admin'] },

@@ -17,6 +17,7 @@ export function EventList({
   onEdit,
   onDelete,
   onDecision,
+  setActiveView,
   Select
 }) {
   return (
@@ -48,6 +49,7 @@ export function EventList({
             onEdit={onEdit}
             onDelete={onDelete}
             onDecision={onDecision}
+            setActiveView={setActiveView}
           />
         ))}
       </div>
@@ -64,7 +66,7 @@ export function EventList({
   );
 }
 
-export function CourseCard({ user, course, onEnroll, onEdit, onDelete, onDecision }) {
+export function CourseCard({ user, course, onEnroll, onEdit, onDelete, onDecision, setActiveView }) {
   return (
     <article className="course-card">
       <div className="course-cover">
@@ -73,7 +75,16 @@ export function CourseCard({ user, course, onEnroll, onEdit, onDelete, onDecisio
       </div>
       <div className="course-body">
         <div className="course-title-row">
-          <h3>{course.title}</h3>
+          <div>
+            <h3>{course.title}</h3>
+            <span 
+              onClick={() => setActiveView('instructors')}
+              style={{ fontSize: '0.85rem', color: 'var(--primary)', cursor: 'pointer', fontWeight: 'bold' }}
+              title="View instructor details"
+            >
+              by {course.instructor}
+            </span>
+          </div>
           <span className={`pill ${course.status.toLowerCase()}`}>{course.status}</span>
         </div>
         <p>{course.description}</p>
